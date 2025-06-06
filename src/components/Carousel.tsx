@@ -32,7 +32,16 @@ const Carousel: React.FC<CarouselProps> = ({
     setIsAnimating(true);
 
     if (infinite) {
-      setCurrentIndex(prev => (prev + step) % images.length);
+      // Для безкінечного режиму потрібно враховувати frameSize
+      const maxValidIndex = images.length - frameSize;
+      const nextIndex = currentIndex + step;
+
+      if (nextIndex > maxValidIndex) {
+        // Якщо перевищуємо максимальний валідний індекс, повертаємось на початок
+        setCurrentIndex(0);
+      } else {
+        setCurrentIndex(nextIndex);
+      }
     } else {
       setCurrentIndex(prev => Math.min(prev + step, maxIndex));
     }
@@ -46,7 +55,16 @@ const Carousel: React.FC<CarouselProps> = ({
     setIsAnimating(true);
 
     if (infinite) {
-      setCurrentIndex(prev => (prev - step + images.length) % images.length);
+      // Для безкінечного режиму потрібно враховувати frameSize
+      const maxValidIndex = images.length - frameSize;
+      const prevIndex = currentIndex - step;
+
+      if (prevIndex < 0) {
+        // Якщо йдемо менше нуля, переходимо в кінець
+        setCurrentIndex(maxValidIndex);
+      } else {
+        setCurrentIndex(prevIndex);
+      }
     } else {
       setCurrentIndex(prev => Math.max(prev - step, 0));
     }
